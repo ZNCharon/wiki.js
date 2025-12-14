@@ -1,0 +1,29 @@
+version: "3.8"
+services:
+  db:
+    image: postgres:15
+    container_name: wiki-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: wiki
+      POSTGRES_USER: wikijs
+      POSTGRES_PASSWORD: wikijs@1234
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+
+  wiki:
+    image: requarks/wiki:2.5.308
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DB_TYPE: postgres
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: wikijs
+      DB_PASS: wikijs@1234
+      DB_NAME: wiki
+    volumes:
+      - ./wiki-data:/wiki/data
+    depends_on:
+      - db
